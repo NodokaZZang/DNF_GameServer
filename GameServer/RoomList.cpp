@@ -3,6 +3,7 @@
 #include "BufferWriter.h"
 #include "GameSession.h"
 #include "Room.h"
+
 RoomList* RoomList::m_instance = nullptr;
 
 RoomList::RoomList()
@@ -18,28 +19,34 @@ RoomList::~RoomList()
 void RoomList::Push(Room* _room)
 {
 	EnterCriticalSection(&m_roomListLock);
+	static int32 _roomSQ = 0;
+	_room->SetRoomSq(++_roomSQ);
+
 	m_rooms.push_back(_room);
 	LeaveCriticalSection(&m_roomListLock);
 }
 
-void RoomList::Pop(Room* _room)
+void RoomList::Pop(int32 _roomSQ)
 {
 	EnterCriticalSection(&m_roomListLock);
 
-	std::vector<Room*>::iterator deleteIt;
-	for (deleteIt = m_rooms.begin(); deleteIt != m_rooms.end(); ++deleteIt)
-		if (*deleteIt == _room)
+	for (auto it = m_rooms.begin(); it != m_rooms.end(); ++it)
+	{
+		if ((*it)->GetRoomSQ() == _roomSQ)
+		{
+			(*it)->SessionRoomDelete();
+			delete (*it);
+			m_rooms.erase(it);
 			break;
-
-	if (deleteIt != m_rooms.end())
-		m_rooms.erase(deleteIt);
+		}
+	}
 
 	LeaveCriticalSection(&m_roomListLock);
 }
 
 void RoomList::SendRoomList(Session* _session, int32 _pageNum)
 {
-	int32 pageViewCount = 10;
+	int32 pageViewCount = 6;
 	int32 pageCount = m_rooms.size() - 1;
 
 	int32 firstIndex = pageCount - (_pageNum * pageViewCount);
@@ -70,16 +77,33 @@ void RoomList::SendRoomList(Session* _session, int32 _pageNum)
 
 	for (int32 i = 0; i < roomList.size(); i++)
 	{
+		bw.Write(roomList[i]->GetRoomSQ());
+		bw.Write(firstIndex + i + 1);
+		bw.Write(roomList[i]->GetStatus());
+
 		int32 strLen = wcslen(roomList[i]->GetTitle()) * 2;
 		bw.Write(strLen);
-		bw.WriteWString(roomList[i]->GetTitle(), strLen);
+		bw.WriteWString(roomList[i]->GetTitle(), strLen);		
+		bw.Write(roomList[i]->GetJoinCnt());
 	}
 
 	bw.Write(pageCount / pageViewCount);
 	bw.Write(_pageNum);
 
-
 	pktHeader->_type = S_T_C_ROOMLIST;
 	pktHeader->_pktSize = bw.GetWriterSize();
 	_session->Send(sendBuffer, pktHeader->_pktSize);
+}
+
+Room* RoomList::GetRoom(int32 _roomSQ)
+{
+	for (auto it = m_rooms.begin(); it != m_rooms.end(); ++it)
+	{
+		if ((*it)->GetRoomSQ() == _roomSQ)
+		{
+			return *it;
+		}
+	}
+
+	return nullptr;
 }

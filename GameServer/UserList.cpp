@@ -41,9 +41,9 @@ void UserList::Pop(Session* _session)
 void UserList::SendUserList(Session* _session, int32 _pageNum)
 {
 	int32 pageViewCount = 6;
-	int32 pageCount = m_sessions.size() - 1;
+	int32 pageCount = m_sessions.size() - 1; // 200 
 
-	int32 firstIndex = pageCount - (_pageNum * pageViewCount);
+	int32 firstIndex = pageCount - (_pageNum * pageViewCount); // 194 ~ 200
 	int32 lastIndex = max(firstIndex - (pageViewCount - 1),0);
 	
 	if (_pageNum > pageCount)

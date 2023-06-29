@@ -11,6 +11,8 @@
 
 int main() 
 {
+	srand(time(nullptr));
+
 	setlocale(LC_ALL, "korean");
 	_wsetlocale(LC_ALL, L"korean");
 
@@ -27,6 +29,14 @@ int main()
 		UserList::GetInstance()->Push(dummy);
 	}
 
+	for (int i = 0; i < 200; i++)
+	{
+		Room* dummyRoom = new Room();
+		WCHAR buffer[256] = { 0 };
+		swprintf_s(buffer, _countof(buffer), L"dummyRoom%d", i + 1);
+		dummyRoom->SetTitle(buffer);
+		RoomList::GetInstance()->Push(dummyRoom);
+	}
 
 	Service service(&iocp, &tcpListener);
 	return 0;

@@ -10,4 +10,5 @@
 
 #include "CorePch.h"
 #include "pkt.h"
+#include "type.h"
 #include <locale.h>
