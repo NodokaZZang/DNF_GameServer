@@ -38,4 +38,7 @@ enum PacketProtocol : __int16
     UDP_MONSTERATTACKED,
     UDP_PLAYERATTACKED,
     C_T_S_GAMEEND,
+    UDP_HPHEEL,
+    UDP_HPHEELSPAWN,
+    UDP_IPPORTINFO,
 };

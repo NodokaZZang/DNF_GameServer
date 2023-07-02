@@ -3,6 +3,7 @@
 #include "TCPListener.h"
 #include "IOCPCore.h"
 #include "Session.h"
+#include "UDPServer.h"
 unsigned int __stdcall WorkThread(void* ptr);
 
 Service::Service(IOCPCore* _core, TCPListener* _listener) : m_iocpCore(_core), m_tcpListener(_listener)
@@ -33,7 +34,10 @@ void Service::Run()
 	m_tcpListener->Init();
 
 	//TCPListener* listener = new TCPListener( new NetAddress("192.168.1.20", 30002) );
-		
+	
+	m_udpServer = new UDPServer();
+	m_udpServer->Init();
+
 	while (true)
 	{
 		Session* newSession = m_tcpListener->Accept();

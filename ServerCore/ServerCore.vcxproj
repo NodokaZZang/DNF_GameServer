@@ -163,6 +163,7 @@
     <ClInclude Include="Session.h" />
     <ClInclude Include="TCPListener.h" />
     <ClInclude Include="Types.h" />
+    <ClInclude Include="UDPServer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BufferReader.cpp" />
@@ -180,6 +181,7 @@
     <ClCompile Include="Service.cpp" />
     <ClCompile Include="Session.cpp" />
     <ClCompile Include="TCPListener.cpp" />
+    <ClCompile Include="UDPServer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
