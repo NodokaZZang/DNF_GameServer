@@ -51,48 +51,62 @@ void RoomList::SendRoomList(Session* _session, int32 _pageNum)
 
 	int32 firstIndex = pageCount - (_pageNum * pageViewCount);
 	int32 lastIndex = max(firstIndex - (pageViewCount - 1), 0);
-
-	if (_pageNum > pageCount)
-		return;
-
-	if (_pageNum < 0)
-		return;
-
+	
 	BYTE sendBuffer[4096];
 	BufferWriter bw(sendBuffer);
-
 	std::vector<Room*> roomList;
 
-	for (int32 index = firstIndex; index >= lastIndex; index--)
+	if (pageCount == -1) 
 	{
-		roomList.push_back(m_rooms[index]);
+		PacketHeader* pktHeader = bw.WriteReserve<PacketHeader>();
+		int32 roomListSize = roomList.size();
+		bw.Write(roomListSize);
+		bw.Write(0);
+		bw.Write(0);
+
+		pktHeader->_type = S_T_C_ROOMLIST;
+		pktHeader->_pktSize = bw.GetWriterSize();
+		_session->Send(sendBuffer, pktHeader->_pktSize);
 	}
-
-	if (roomList.size() == 0)
-		return;
-
-	PacketHeader* pktHeader = bw.WriteReserve<PacketHeader>();
-	int32 roomListSize = roomList.size();
-	bw.Write(roomListSize);
-
-	for (int32 i = 0; i < roomList.size(); i++)
+	else
 	{
-		bw.Write(roomList[i]->GetRoomSQ());
-		bw.Write(firstIndex + i + 1);
-		bw.Write(roomList[i]->GetStatus());
+		if (_pageNum > pageCount)
+			return;
 
-		int32 strLen = wcslen(roomList[i]->GetTitle()) * 2;
-		bw.Write(strLen);
-		bw.WriteWString(roomList[i]->GetTitle(), strLen);		
-		bw.Write(roomList[i]->GetJoinCnt());
+		if (_pageNum < 0)
+			return;
+
+		for (int32 index = firstIndex; index >= lastIndex; index--)
+		{
+			roomList.push_back(m_rooms[index]);
+		}
+
+		if (roomList.size() == 0)
+			return;
+
+		PacketHeader* pktHeader = bw.WriteReserve<PacketHeader>();
+		int32 roomListSize = roomList.size();
+		bw.Write(roomListSize);
+
+		for (int32 i = 0; i < roomList.size(); i++)
+		{
+			bw.Write(roomList[i]->GetRoomSQ());
+			bw.Write(firstIndex + i + 1);
+			bw.Write(roomList[i]->GetStatus());
+
+			int32 strLen = wcslen(roomList[i]->GetTitle()) * 2;
+			bw.Write(strLen);
+			bw.WriteWString(roomList[i]->GetTitle(), strLen);
+			bw.Write(roomList[i]->GetJoinCnt());
+		}
+
+		bw.Write(pageCount / pageViewCount);
+		bw.Write(_pageNum);
+
+		pktHeader->_type = S_T_C_ROOMLIST;
+		pktHeader->_pktSize = bw.GetWriterSize();
+		_session->Send(sendBuffer, pktHeader->_pktSize);
 	}
-
-	bw.Write(pageCount / pageViewCount);
-	bw.Write(_pageNum);
-
-	pktHeader->_type = S_T_C_ROOMLIST;
-	pktHeader->_pktSize = bw.GetWriterSize();
-	_session->Send(sendBuffer, pktHeader->_pktSize);
 }
 
 Room* RoomList::GetRoom(int32 _roomSQ)

@@ -173,13 +173,15 @@ void PacketHandler::PakcetHandle_C_T_S_ENTEROOM(Session* _session, BYTE* _dataPt
 
 	Room* room = RoomList::GetInstance()->GetRoom(roomSQ);
 	
+	if (room == nullptr) return;
+
 	if (room->GetStatus() == 1) 
 	{
 		return;
 	}
 
 	if (room->GetJoinCnt() == 4) 
-	{
+	{	
 		return;
 	}
 
@@ -267,15 +269,22 @@ void PacketHandler::PacketHandle_C_T_S_UDPIPPORTSEND(Session* _session, BYTE* _d
 {
 	BufferReader br(_dataPtr);
 	int32 ipSize;
+	int32 localipSize;
 	int32 port;
 
-	br.Read(ipSize);
 	WCHAR ip[20] = { 0 };
+	WCHAR localIp[20] = { 0 };
+
+	br.Read(ipSize);
 	br.ReadWString(ip, ipSize);
+	br.Read(localipSize);
+	br.ReadWString(localIp, localipSize);
 	br.Read(port);
 
-	static_cast<GameSession*>(_session)->SetUDPInfo(ip, ipSize, port);
+	static_cast<GameSession*>(_session)->SetUDPInfo(ip, ipSize, localIp, localipSize, port);
 }
+
+//void PacketHandler::PacketHandle_C2S_GAMEEND(Session* _session, BYTE* _dataPtr, int _dataSize)
 
 void PacketHandler::PacketHandle_C_T_S_GAMEEND(Session* _session, BYTE* _dataPtr, int _dataSize)
 {

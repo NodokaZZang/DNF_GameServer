@@ -7,7 +7,6 @@
 #include "Room.h"
 void GameSession::OnRecv(Session* session, BYTE* dataPtr, int32 dataLen)
 {
-	wprintf(L"GameSession OnRecv %s : recvSize : %d \n", m_netAddress->GetClientIPSTR(), dataLen);
 	PacketHandler::PakcetHandle(session,dataPtr, dataLen);
 }
 
@@ -33,8 +32,9 @@ void GameSession::RoomPop()
 	_room = nullptr;
 }
 
-void GameSession::SetUDPInfo(WCHAR* ip, int32 ipSize, int32 port)
+void GameSession::SetUDPInfo(WCHAR* ip, int32 ipSize, WCHAR* localip, int32 localipSize, int32 port)
 {
 	::memcpy(m_udpServerIP, ip, ipSize);
+	::memcpy(m_udpServerLocalIP, localip, localipSize);
 	m_port = port;
 }

@@ -2,6 +2,8 @@
 #include "UDPServer.h"
 #include "NetAddress.h"
 #include "BufferWriter.h"
+#include "BufferReader.h"
+
 unsigned int __stdcall UDPRecvThread(void* ptr);
 
 void UDPServer::Init()
@@ -40,21 +42,34 @@ void UDPServer::Recv()
 		InetNtopW(AF_INET, &clientAddr.sin_addr, clientIP, INET_ADDRSTRLEN);
 		int32 clientPort = ntohs(clientAddr.sin_port);
 
-		wprintf(L"UDP IP: %s Port: %d \n", clientIP, clientPort);
+		wprintf(L"Connect UDP IP: %s Port: %d \n", clientIP,  clientPort);
+		PacketHeader* header = reinterpret_cast<PacketHeader*>(recvData);
 
-		BYTE sendBuffer[1024];
-		BufferWriter bw(sendBuffer);
-		PacketHeader* pktHeader = bw.WriteReserve<PacketHeader>();
-		int32 strSize = wcslen(clientIP) * 2;
+		switch (header->_type)
+		{
+		case 39:
+		{
+			BYTE sendBuffer[1024];
+			BufferWriter bw(sendBuffer);
+			PacketHeader* pktHeader = bw.WriteReserve<PacketHeader>();
+			int32 strSize = wcslen(clientIP) * 2;
+
+			bw.Write(strSize);
+			bw.WriteWString(clientIP, strSize);
+			bw.Write(clientPort);
+
+			pktHeader->_type = 40; // UDP_IPPORTINFO
+			pktHeader->_pktSize = bw.GetWriterSize();
+			sendto(_socket, (char*)sendBuffer, pktHeader->_pktSize, 0, (sockaddr*)&clientAddr, clientAddrSize);
+			break; // C_T_S_IPPORTINFO,
+		}
+
+		case 41:
+		{
 		
-		bw.Write(strSize);
-		bw.WriteWString(clientIP, strSize);
-		bw.Write(clientPort);
-
-		pktHeader->_type = 39; // UDP_IPPORTINFO
-		pktHeader->_pktSize = bw.GetWriterSize();
-
-		sendto(_socket, (char*)sendBuffer, pktHeader->_pktSize, 0, (sockaddr*)&clientAddr, clientAddrSize);
+			break;
+		}
+		}
 	}
 }
 
@@ -71,4 +86,3 @@ unsigned int __stdcall UDPRecvThread(void* ptr)
 
 	return 0;
 }
-

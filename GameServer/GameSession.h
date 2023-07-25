@@ -9,6 +9,7 @@ private:
 private:
 	/* UPD Á¤º¸ */
 	WCHAR m_udpServerIP[15] = {0};
+	WCHAR m_udpServerLocalIP[15] = {0};
 	int32 m_port;
 
 public:
@@ -22,8 +23,9 @@ public:
 	void SetRoom(Room* room) { _room = room; }
 	int32 GetPlayerID() { return _playerId; }
 	Room* GetRoom() { return _room; }
-	void SetUDPInfo(WCHAR* ip,  int32 ipSize, int32 port);
+	void SetUDPInfo(WCHAR* ip, int32 ipSize, WCHAR* localip, int32 localipSize, int32 port);
 	WCHAR* GetUDPIP() { return m_udpServerIP; }
+	WCHAR* GetUDPLocalIP() { return m_udpServerLocalIP; }
 	int32 GetUDPPort() { return m_port; }
 };
 

@@ -259,13 +259,14 @@ void Room::UserReady(Session* _session, bool ready, bool admin)
 		{
 			if (m_player[i] != nullptr) 
 			{
-				if (m_player[i]->GetPlayerSQ() == m_adminPlayerSQ)
-					continue;
 				if (m_player[i]->GetPlayerPick() == 0)
 				{
 					LeaveCriticalSection(&m_roomLock);
 					return;
 				}
+
+				if (m_player[i]->GetPlayerSQ() == m_adminPlayerSQ)
+					continue;
 				
 				else if (m_player[i]->GetReady() == false)
 				{
@@ -334,6 +335,12 @@ void Room::GameInit(Session* _session)
 		
 		bw.Write(strSize);
 		bw.WriteWString(gs->GetUDPIP(), strSize);
+
+		int32 localstrSize = wcslen(gs->GetUDPLocalIP()) * 2;
+
+		bw.Write(localstrSize);
+		bw.WriteWString(gs->GetUDPLocalIP(), localstrSize);
+
 		bw.Write(gs->GetUDPPort());
 		
 		int32 usernameSize = wcslen(gs->GetUsername()) * 2;

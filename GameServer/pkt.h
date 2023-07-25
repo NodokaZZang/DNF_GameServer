@@ -40,5 +40,11 @@ enum PacketProtocol : __int16
     C_T_S_GAMEEND,
     UDP_HPHEEL,
     UDP_HPHEELSPAWN,
-    UDP_IPPORTINFO,
+    C_T_S_IPPORTINFO,
+    S_T_C_IPPORTINFO,
+    C_T_S_UDPPING,
+    UDP_PING,
+    UDP_TASK_PING,
+    UDP_TASK_PING_CALLBACK,
+    UDP_TASK_UP_PING,
 };

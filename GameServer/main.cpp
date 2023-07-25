@@ -20,23 +20,23 @@ int main()
 	Session* (*sessionFactory)(void) = GameSession::MakeGameSession;
 	TCPListener tcpListener(sessionFactory);
 
-	for (int i = 0; i < 200; i++)
-	{
-		GameSession* dummy = new GameSession();
-		WCHAR buffer[256] = { 0 };
-		swprintf_s(buffer, _countof(buffer), L"dummyClient%d", i + 1);
-		dummy->SetUsername(buffer);
-		UserList::GetInstance()->Push(dummy);
-	}
+	//for (int i = 0; i < 200; i++)
+	//{
+	//	GameSession* dummy = new GameSession();
+	//	WCHAR buffer[256] = { 0 };
+	//	swprintf_s(buffer, _countof(buffer), L"dummyClient%d", i + 1);
+	//	dummy->SetUsername(buffer);
+	//	UserList::GetInstance()->Push(dummy);
+	//}
 
-	for (int i = 0; i < 200; i++)
-	{
-		Room* dummyRoom = new Room();
-		WCHAR buffer[256] = { 0 };
-		swprintf_s(buffer, _countof(buffer), L"dummyRoom%d", i + 1);
-		dummyRoom->SetTitle(buffer);
-		RoomList::GetInstance()->Push(dummyRoom);
-	}
+	//for (int i = 0; i < 200; i++)
+	//{
+	//	Room* dummyRoom = new Room();
+	//	WCHAR buffer[256] = { 0 };
+	//	swprintf_s(buffer, _countof(buffer), L"dummyRoom%d", i + 1);
+	//	dummyRoom->SetTitle(buffer);
+	//	RoomList::GetInstance()->Push(dummyRoom);
+	//}
 
 	Service service(&iocp, &tcpListener);
 	return 0;
