@@ -7,9 +7,9 @@ private:
 	int32		_playerId = -1;
 
 private:
-	/* UPD Á¤º¸ */
-	WCHAR m_udpServerIP[15] = {0};
-	WCHAR m_udpServerLocalIP[15] = {0};
+	/* UPD ï¿½ï¿½ï¿½ï¿½ */
+	WCHAR m_udpServerIP[100] = {0};
+	WCHAR m_udpServerLocalIP[100] = {0};
 	int32 m_port;
 
 public:

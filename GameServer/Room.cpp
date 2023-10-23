@@ -346,7 +346,7 @@ void Room::GameInit(Session* _session)
 		int32 usernameSize = wcslen(gs->GetUsername()) * 2;
 		
 		bw.Write(usernameSize);
-		bw.WriteWString(gs->GetUsername(), usernameSize);
+		bw.WriteWString(gs->GetUsername(), usernameSize); // ""
 	}
 
 	pktHeader->_pktSize = bw.GetWriterSize();

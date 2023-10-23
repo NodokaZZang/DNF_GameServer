@@ -39,7 +39,6 @@ void Session::OnRead(int32 numOfBytes)
 			wprintf(L"RecvError %s \n", m_netAddress->GetClientIPSTR());
 		}
 	}
-
 }
 
 void Session::OnRecv(Session* session, BYTE* dataPtr, int32 dataLen)
