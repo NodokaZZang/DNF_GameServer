@@ -20,5 +20,5 @@
 #include "Packet.h"
 
 
-#define IP	"58.236.86.23"
+#define IP	"127.0.0.1"
 #define PORT 30002
